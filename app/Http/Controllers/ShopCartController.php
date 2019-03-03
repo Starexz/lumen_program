@@ -15,22 +15,29 @@ use Illuminate\Http\Request;
 class ShopCartController extends Controller
 {
     protected $shopCartService;
+    protected $request;
 
-    public function __construct(ShopCartService $shopCartService)
+    public function __construct(
+        Request $request,
+        ShopCartService $shopCartService
+    )
     {
         $this->shopCartService = $shopCartService;
+        $this->request = $request;
     }
 
     public function getCartSumCount()
     {
-        $result =  $this->shopCartService->getCartSumCount();
+        $uid = $this->request->header('uid');
+        $result =  $this->shopCartService->getCartSumCount($uid);
         return ['code' => 200, 'data' => $result];
     }
 
-    public function addCartGoods(Request $request)
+    public function addCartGoods()
     {
-        $goodsId = $request->input('goods_id');
-        $result = $this->shopCartService->addCartGoods($goodsId);
+        $goodsId = $this->request->input('goods_id');
+        $uid = $this->request->header('uid');
+        $result = $this->shopCartService->addCartGoods($goodsId, $uid);
         return ['code' => 200];
     }
 

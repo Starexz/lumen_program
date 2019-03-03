@@ -28,18 +28,21 @@ class ShopCartService extends BaseService
         return self::$_instance;
     }
 
-    public function getCartSumCount()
+    public function getCartSumCount($uid)
     {
-        $result = $this->_model->sum('number');
+        if(empty($uid)) {
+            return '0';
+        }
+        $result = $this->_model->where('uid', $uid)->sum('number');
         return $result ?: '0';
     }
 
-    public function addCartGoods($goodsId)
+    public function addCartGoods($goodsId, $uid)
     {
-        if(empty($goodsId)){
+        if(empty($goodsId) || empty($uid)){
             return false;
         }
-        $cart = $this->_model->where('goods_id', $goodsId)->first();
+        $cart = $this->_model->where('goods_id', $goodsId)->where('uid', $uid)->first();
         if($cart){
             $shopCartModel = $this->_model->find($cart->id);
             $shopCartModel->number = $cart->number + 1;
@@ -49,6 +52,7 @@ class ShopCartService extends BaseService
             $shopCartModel->add_time = time();
         }
         $shopCartModel->goods_id = $goodsId;
+        $shopCartModel->uid = $uid;
         $result = $shopCartModel->save();
         return $result;
     }

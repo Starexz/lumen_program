@@ -15,7 +15,12 @@ $router->get('/', function () use ($router) {
     return $router->app->version();
 });
 
+
 $router->get('/goods/index', 'GoodsController@index');
 $router->get('/shopCart/getCartSumCount', 'ShopCartController@getCartSumCount');
+$router->group(['middleware' => 'login'], function() use($router) {
+    $router->post('/shopCart/addCartGoods', 'ShopCartController@addCartGoods');
+});
 
-$router->post('/shopCart/addCartGoods', 'ShopCartController@addCartGoods');
+$router->post('/login/doLogin', 'LoginController@doLogin');
+$router->post('/login/logout', 'LoginController@logout');
